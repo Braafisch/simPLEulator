@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>fsd_vehicle_sim</name>
+  <version>0.0.1</version>
+  <description>Simple bicycle model + lidar sim</description>
+  <maintainer email="you@example.com">You</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+</package>
