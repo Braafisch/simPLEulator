@@ -19,7 +19,7 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-pip
 RUN apt-get install -y python3-venv
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    cmake git ros-humble-rqt* ros-humble-rviz2 \
+    cmake git tree ros-humble-rqt* ros-humble-rviz2 ros-humble-rmw-cyclonedds-cpp\
     && rm -rf /var/lib/apt/lists/*
 ENV SHELL /bin/bash
 
