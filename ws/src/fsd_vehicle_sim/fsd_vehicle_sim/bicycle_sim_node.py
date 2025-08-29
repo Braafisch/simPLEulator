@@ -91,6 +91,7 @@ class BicycleSim(Node):
         self.pub_odom = self.create_publisher(Odometry, '/odom', 10)
         self.pub_twist = self.create_publisher(TwistStamped, '/vehicle/ground_speed', 10)
         self.pub_gps = self.create_publisher(NavSatFix, '/gps/fix', 10)
+        self.pub_marker = self.create_publisher(Marker, '/vehicle/marker', 10)
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
         
         # --- Timing ---
@@ -144,6 +145,9 @@ class BicycleSim(Node):
 
         # Publish TF map -> base_link
         self.publish_tf(now.to_msg())
+        
+        # Publish Marker
+        self.publish_marker(now.to_msg())
         
     def publish_odometry(self, stamp_msg, v_lin: float, yaw_rate: float):
         odom = Odometry()
@@ -223,6 +227,37 @@ class BicycleSim(Node):
         navsat.position_covariance_type = NavSatFix.COVARIANCE_TYPE_DIAGONAL_KNOWN
         
         self.pub_gps.publish(navsat)
+
+    def publish_marker(self, stamp_msg):
+        marker = Marker()
+        marker.header.stamp = stamp_msg
+        marker.header.frame_id = self.frame_base  # also "base_link"
+        marker.ns = "vehicle"
+        marker.id = 0
+        marker.type = Marker.CUBE
+        marker.action = Marker.ADD
+
+        # Fahrzeug-Klotz (Länge x Breite x Höhe)
+        marker.scale.x = float(self.get_parameter('marker_length').value)
+        marker.scale.y = float(self.get_parameter('marker_width').value)
+        marker.scale.z = float(self.get_parameter('marker_height').value)
+
+        # Mittelpunkt mittig in base_link setzen
+        marker.pose.position.x = marker.scale.x / 2.0   # vorne von base_link aus
+        marker.pose.position.y = 0.0
+        marker.pose.position.z = marker.scale.z / 2.0   # halb hoch
+        marker.pose.orientation.x = 0.0
+        marker.pose.orientation.y = 0.0
+        marker.pose.orientation.z = 0.0
+        marker.pose.orientation.w = 1.0
+
+        # Farbe
+        marker.color.r = 0.1
+        marker.color.g = 0.8
+        marker.color.b = 0.1
+        marker.color.a = 0.8   # Alpha wichtig!
+
+        self.pub_marker.publish(marker)
 
         
 def main():
