@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             # ros2 run fsd_vehicle_sim bicycle_sim
             'bicycle_sim = fsd_vehicle_sim.bicycle_sim_node:main',
+            'lidar_cone_sim = fsd_vehicle_sim.lidar_sim_node:main',
         ],
     },
 )
