@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="fsd_vehicle">
+  <!-- Parameters for sensor mounts (can be overridden from launch) -->
+  <xacro:property name="lidar_x" value="0.9"/>
+  <xacro:property name="lidar_y" value="0.0"/>
+  <xacro:property name="lidar_z" value="0.35"/>
+  <xacro:property name="lidar_roll"  value="0.0"/>
+  <xacro:property name="lidar_pitch" value="0.0"/>
+  <xacro:property name="lidar_yaw"   value="0.0"/>
+
+  <xacro:property name="gps_x" value="0.0"/>
+  <xacro:property name="gps_y" value="0.0"/>
+  <xacro:property name="gps_z" value="0.8"/>
+  <xacro:property name="gps_roll"  value="0.0"/>
+  <xacro:property name="gps_pitch" value="0.0"/>
+  <xacro:property name="gps_yaw"   value="0.0"/>
+
+  <!-- Minimal link tree: base_link with two fixed child frames -->
+  <link name="base_link"/>
+  <link name="lidar_link"/>
+  <link name="gps"/>
+
+  <joint name="base_to_lidar" type="fixed">
+    <parent link="base_link"/>
+    <child  link="lidar_link"/>
+    <origin xyz="${lidar_x} ${lidar_y} ${lidar_z}"
+            rpy="${lidar_roll} ${lidar_pitch} ${lidar_yaw}"/>
+  </joint>
+
+  <joint name="base_to_gps" type="fixed">
+    <parent link="base_link"/>
+    <child  link="gps"/>
+    <origin xyz="${gps_x} ${gps_y} ${gps_z}"
+            rpy="${gps_roll} ${gps_pitch} ${gps_yaw}"/>
+  </joint>
+</robot>
+
