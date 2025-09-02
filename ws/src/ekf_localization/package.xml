@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>fsd_localization</name>
+  <version>0.0.1</version>
+  <description>Local EKF (vx, vy, vyaw) using robot_localization</description>
+
+  <maintainer email="w.bradfisch@gmx.de">Wolfi</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Launching -->
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <!-- The filter itself -->
+  <exec_depend>robot_localization</exec_depend>
+
+  <!-- Messages only if du z. B. ros2 topic pub/testen willst -->
+  <exec_depend>geometry_msgs</exec_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
