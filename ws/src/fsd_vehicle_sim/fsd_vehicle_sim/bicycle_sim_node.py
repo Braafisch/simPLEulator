@@ -7,7 +7,7 @@ from rclpy.duration import Duration
 
 from std_msgs.msg import Float32
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import TransformStamped, TwistStamped
+from geometry_msgs.msg import TransformStamped, TwistStamped, TwistWithCovarianceStamped
 from sensor_msgs.msg import NavSatFix, NavSatStatus
 from visualization_msgs.msg import Marker
 import tf2_ros
@@ -43,7 +43,7 @@ class BicycleSim(Node):
         self.declare_parameter("x0", 0.0)
         self.declare_parameter("y0", 0.0)
         self.declare_parameter("yaw0", 0.0)  # [rad]
-        self.declare_parameter("frame_map", "map")
+        self.declare_parameter("frame_map", "track")
         self.declare_parameter("frame_base", "base_link")
 
         # „Sensorik“
@@ -98,9 +98,9 @@ class BicycleSim(Node):
         self.sub_d = self.create_subscription(
             Float32, "/steering_angle", self.on_steer, 10
         )
-        self.pub_odom = self.create_publisher(Odometry, "/odom", 10)
+        # self.pub_odom = self.create_publisher(Odometry, "/odom", 10)
         self.pub_twist = self.create_publisher(
-            TwistStamped, "/vehicle/ground_speed", 10
+            TwistWithCovarianceStamped, "/vehicle/ground_speed", 10
         )
         self.pub_gps = self.create_publisher(NavSatFix, "/gps/fix", 10)
         self.pub_marker = self.create_publisher(Marker, "/vehicle/marker", 10)
@@ -150,7 +150,7 @@ class BicycleSim(Node):
         self.yaw = (self.yaw + math.pi) % (2.0 * math.pi) - math.pi
 
         # Publish Odom
-        self.publish_odometry(now.to_msg(), self.v, yaw_rate)
+        # self.publish_odometry(now.to_msg(), self.v, yaw_rate)
 
         # Publish Ground Speed
         self.publish_ground_speed(now.to_msg(), self.v, yaw_rate)
@@ -164,32 +164,32 @@ class BicycleSim(Node):
         # Publish Marker
         self.publish_marker(now.to_msg())
 
-    def publish_odometry(self, stamp_msg, v_lin: float, yaw_rate: float):
-        odom = Odometry()
-        odom.header.stamp = stamp_msg
-        odom.header.frame_id = self.frame_map
-        odom.child_frame_id = self.frame_base
+        # def publish_odometry(self, stamp_msg, v_lin: float, yaw_rate: float):
+        #     odom = Odometry()
+        #     odom.header.stamp = stamp_msg
+        #     odom.header.frame_id = self.frame_map
+        #     odom.child_frame_id = self.frame_base
 
-        odom.pose.pose.position.x = self.x
-        odom.pose.pose.position.y = self.y
-        odom.pose.pose.position.z = 0.0
+        #     odom.pose.pose.position.x = self.x
+        #     odom.pose.pose.position.y = self.y
+        #     odom.pose.pose.position.z = 0.0
 
-        qz = math.sin(self.yaw * 0.5)
-        qw = math.cos(self.yaw * 0.5)
-        odom.pose.pose.orientation.x = 0.0
-        odom.pose.pose.orientation.y = 0.0
-        odom.pose.pose.orientation.z = qz
-        odom.pose.pose.orientation.w = qw
+        #     qz = math.sin(self.yaw * 0.5)
+        #     qw = math.cos(self.yaw * 0.5)
+        #     odom.pose.pose.orientation.x = 0.0
+        #     odom.pose.pose.orientation.y = 0.0
+        #     odom.pose.pose.orientation.z = qz
+        #     odom.pose.pose.orientation.w = qw
 
-        odom.twist.twist.linear.x = v_lin
-        odom.twist.twist.angular.z = yaw_rate
+        #     odom.twist.twist.linear.x = v_lin
+        #     odom.twist.twist.angular.z = yaw_rate
 
         # # (Optionale) grobe Kovarianzen
         # odom.pose.covariance[0] = 0.05**2
         # odom.pose.covariance[7] = 0.05**2
         # odom.pose.covariance[35] = math.radians(1.0)**2
 
-        self.pub_odom.publish(odom)
+        # self.pub_odom.publish(odom)
 
     def publish_tf(self, stamp_msg):
         t = TransformStamped()
@@ -204,13 +204,52 @@ class BicycleSim(Node):
         self.tf_broadcaster.sendTransform(t)
 
     def publish_ground_speed(self, stamp_msg, v_lin: float, yaw_rate: float):
-        twist = TwistStamped()
+        twist = TwistWithCovarianceStamped()
         twist.header.stamp = stamp_msg
         twist.header.frame_id = self.frame_base
         # twist.child_frame_id = self.frame_base
-        twist.twist.linear.x = v_lin
-        twist.twist.angular.z = yaw_rate
-
+        twist.twist.twist.linear.x = v_lin * math.cos(self.yaw)
+        twist.twist.twist.linear.y = v_lin * math.sin(self.yaw)
+        twist.twist.twist.linear.z = 0.0
+        twist.twist.twist.angular.z = yaw_rate
+        twist.twist.covariance = [
+            0.0025,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.01,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0004,
+        ]
         self.pub_twist.publish(twist)
 
     def publish_gps(self, stamp_msg):

@@ -22,7 +22,7 @@ def generate_launch_description():
                         "gps_alt0_m": 300.0,
                         "noise_gps_xy_std": 0.20,
                         "noise_gps_alt_std": 0.50,
-                        "frame_map": "map",
+                        "frame_map": "track",
                         "frame_base": "base_link",
                     }
                 ],
