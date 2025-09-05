@@ -37,7 +37,7 @@ def generate_launch_description():
                         # Frames & Quelle
                         "lidar_frame": "lidar_link",
                         "cones_topic": "/visualization_marker_array",
-                        "rate_hz": "20.0",  # nur Marker aus 'map' verwenden
+                        "rate_hz": 20.0,  # nur Marker aus 'map' verwenden
                         # Reichweite / Filter
                         "min_range": 0.2,
                         "max_range": 90.0,
