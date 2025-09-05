@@ -65,7 +65,7 @@ class OS1LikeLidar(Node):
         self.create_subscription(MarkerArray, self.cones_topic, self.cb_cones, 10)
 
         # Publisher: ground-truth cones
-        self.pub_gt = self.create_publisher(ConeDetection, "cones", 10)
+        self.pub_gt = self.create_publisher(ConeDetection, "/detection/cones", 10)
 
         # TF
         self.tf_buffer = tf2_ros.Buffer()
