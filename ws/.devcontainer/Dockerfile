@@ -26,7 +26,12 @@ ENV SHELL /bin/bash
 # ********************************************************
 # * Anything else you want to do like clean up goes here *
 # ********************************************************
-RUN pip3 install numpy scipy pandas black
+RUN pip3 install --no-cache-dir \ 
+    "numpy==1.23.5" \
+    "scipy==1.10.1" \
+    "pandas==1.5.3" \
+    "black==24.4.2" \
+    "filterpy==1.4.5"
 
 # ROS setup automatisch sourcen
 RUN echo 'source /opt/ros/humble/setup.bash' >> /home/$USERNAME/.bashrc && \
