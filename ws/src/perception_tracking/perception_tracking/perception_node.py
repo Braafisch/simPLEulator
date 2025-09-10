@@ -8,7 +8,7 @@ from rclpy.duration import Duration
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy
 import tf2_geometry_msgs
 from geometry_msgs.msg import Point, PointStamped
-from vehicle_msgs.msg import ConeDetection, ConeTrackedArray, ConeDetection
+from vehicle_msgs.msg import ConeDetection, ConeTrackedArray
 from tf2_ros import Buffer, TransformListener
 from filterpy.kalman import KalmanFilter
 from scipy.spatial import cKDTree
@@ -62,30 +62,30 @@ class TrackingNode(Node):
         )
         self.cones_src = []
         self.create_subscription(
-            ConeDetection, self.cones_topic, self.cb_detections, qos
+            ConeDetection, self.input_topic, self.cb_detections, qos
         )
 
-        def transform_cones(self, point: Point, stamp):
-            ps = PointStamped()
-            ps.header.stamp = stamp
-            ps.header.frame_id = self.source_frame
-            ps.point = point
-            tr = self.tf_buf.lookup_transform(
-                self.target_frame,
-                self.source_frame,
-                Time(),
-                timeout=Duration(seconds=0.2),
-            )
-            tp = tf2_geometry_msgs.do_transform_point(ps, tr)
-            return tp.point
+    def transform_cones(self, point: Point, stamp):
+        ps = PointStamped()
+        ps.header.stamp = stamp
+        ps.header.frame_id = self.source_frame
+        ps.point = point
+        tr = self.tf_buf.lookup_transform(
+            self.target_frame,
+            self.source_frame,
+            Time(),
+            timeout=Duration(seconds=0.2),
+        )
+        tp = tf2_geometry_msgs.do_transform_point(ps, tr)
+        return tp.point
 
-        def cb_detections(self, msg: ConeDetection):
-            dets = []
-            for cone in msg.cones:
-                pt = self.transform_cones(cone, msg.header.stamp)
-                if pt is None:
-                    continue
-                dets.append((pt.x, pt.y))
+    def cb_detections(self, msg: ConeDetection):
+        dets = []
+        for cone in msg.cones:
+            pt = self.transform_cones(cone, msg.header.stamp)
+            if pt is None:
+                continue
+            dets.append((pt.x, pt.y))
 
 
 def main():
