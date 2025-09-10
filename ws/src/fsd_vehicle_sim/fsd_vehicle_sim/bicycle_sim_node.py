@@ -7,7 +7,7 @@ from rclpy.duration import Duration
 
 from std_msgs.msg import Float32
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import TransformStamped, TwistStamped, TwistWithCovarianceStamped
+from geometry_msgs.msg import TransformStamped, TwistStamped
 from sensor_msgs.msg import NavSatFix, NavSatStatus
 from visualization_msgs.msg import Marker
 import tf2_ros
@@ -100,7 +100,7 @@ class BicycleSim(Node):
         )
         # self.pub_odom = self.create_publisher(Odometry, "/odom", 10)
         self.pub_twist = self.create_publisher(
-            TwistWithCovarianceStamped, "/vehicle/ground_speed", 10
+            TwistStamped, "/vehicle/ground_speed", 10
         )
         self.pub_gps = self.create_publisher(NavSatFix, "/gps/fix", 10)
         self.pub_marker = self.create_publisher(Marker, "/vehicle/marker", 10)
@@ -194,8 +194,8 @@ class BicycleSim(Node):
     def publish_tf(self, stamp_msg):
         t = TransformStamped()
         t.header.stamp = stamp_msg
-        t.header.frame_id = self.frame_map
-        t.child_frame_id = self.frame_base
+        t.header.frame_id = self.frame_base
+        t.child_frame_id = self.frame_map
         t.transform.translation.x = self.x
         t.transform.translation.y = self.y
         t.transform.translation.z = 0.0
@@ -204,52 +204,14 @@ class BicycleSim(Node):
         self.tf_broadcaster.sendTransform(t)
 
     def publish_ground_speed(self, stamp_msg, v_lin: float, yaw_rate: float):
-        twist = TwistWithCovarianceStamped()
+        twist = TwistStamped()
         twist.header.stamp = stamp_msg
         twist.header.frame_id = self.frame_base
         # twist.child_frame_id = self.frame_base
-        twist.twist.twist.linear.x = v_lin * math.cos(self.yaw)
-        twist.twist.twist.linear.y = v_lin * math.sin(self.yaw)
-        twist.twist.twist.linear.z = 0.0
-        twist.twist.twist.angular.z = yaw_rate
-        twist.twist.covariance = [
-            0.0025,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.01,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            1.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0004,
-        ]
+        twist.twist.linear.x = v_lin * math.cos(self.yaw)
+        twist.twist.linear.y = v_lin * math.sin(self.yaw)
+        twist.twist.linear.z = 0.0
+        twist.twist.angular.z = yaw_rate
         self.pub_twist.publish(twist)
 
     def publish_gps(self, stamp_msg):
