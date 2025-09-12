@@ -31,7 +31,8 @@ RUN pip3 install --no-cache-dir \
     "scipy==1.10.1" \
     "pandas==1.5.3" \
     "black==24.4.2" \
-    "filterpy==1.4.5"
+    "filterpy==1.4.5"\
+    "scikit-learn==1.7.2"
 
 # ROS setup automatisch sourcen
 RUN echo 'source /opt/ros/humble/setup.bash' >> /home/$USERNAME/.bashrc && \
