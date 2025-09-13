@@ -18,6 +18,17 @@ def generate_launch_description():
         )
     )
 
+    # include perception tracking
+    perception_tracking = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("fsd_perception_tracking"),
+                "launch",
+                "perception.launch.py",
+            )
+        )
+    )
+
     # include vehicle sim
     vehicle_sim_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -62,6 +73,17 @@ def generate_launch_description():
         )
     )
 
+    # include trajectory
+    trajectory_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory("fsd_trajectory_planning"),
+                "launch",
+                "trajectory.launch.py",
+            )
+        )
+    )
+
     return LaunchDescription(
         [
             lidar_sim_launch,
@@ -69,5 +91,7 @@ def generate_launch_description():
             description_launch,
             accel_track_launch,
             localization_launch,
+            perception_tracking,
+            trajectory_launch,
         ]
     )
