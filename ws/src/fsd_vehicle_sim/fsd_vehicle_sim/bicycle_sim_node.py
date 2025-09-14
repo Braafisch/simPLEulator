@@ -35,7 +35,7 @@ class BicycleSim(Node):
         # --- Parameter ---
         # Fahrzeug / Modell
         self.declare_parameter("wheelbase", 1.6)  # [m]
-        self.declare_parameter("rate_hz", 50.0)  # [Hz]
+        self.declare_parameter("rate_hz", 200.0)  # [Hz]
         self.declare_parameter("speed_limit", 15.0)  # [m/s]
         self.declare_parameter("steer_limit", math.radians(35.0))  # [rad]
         self.declare_parameter("tau_speed", 0.3)  # [s]  1st-order zu Sollgeschw.
@@ -194,8 +194,8 @@ class BicycleSim(Node):
     def publish_tf(self, stamp_msg):
         t = TransformStamped()
         t.header.stamp = stamp_msg
-        t.header.frame_id = self.frame_base
-        t.child_frame_id = self.frame_map
+        t.header.frame_id = self.frame_map
+        t.child_frame_id = self.frame_base
         t.transform.translation.x = self.x
         t.transform.translation.y = self.y
         t.transform.translation.z = 0.0
@@ -208,8 +208,10 @@ class BicycleSim(Node):
         twist.header.stamp = stamp_msg
         twist.header.frame_id = self.frame_base
         # twist.child_frame_id = self.frame_base
-        twist.twist.linear.x = v_lin * math.cos(self.yaw)
-        twist.twist.linear.y = v_lin * math.sin(self.yaw)
+        # twist.twist.linear.x = v_lin * math.cos(self.yaw)
+        # twist.twist.linear.y = v_lin * math.sin(self.yaw)
+        twist.twist.linear.x = v_lin
+        twist.twist.linear.y = 0.0
         twist.twist.linear.z = 0.0
         twist.twist.angular.z = yaw_rate
         self.pub_twist.publish(twist)

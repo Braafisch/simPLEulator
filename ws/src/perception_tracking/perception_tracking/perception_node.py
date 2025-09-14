@@ -127,8 +127,8 @@ class TrackingNode(Node):
                     )
                 elif len(indexes_track[i]) == 0:
                     self.track[i]["misses"] += 1
-                    if self.track[i]["misses"] > self.max_misses:
-                        self.track.pop(i)
+                    # if self.track[i]["misses"] > self.max_misses:
+                    #     self.track.pop(i)
                 else:
                     continue
 

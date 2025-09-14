@@ -19,7 +19,7 @@ def generate_launch_description():
                 parameters=[
                     {
                         "frame_id": "track",
-                        "length": 75.0,
+                        "length": 100.0,
                         "spacing": 5.0,
                         "lane_half_width": 1.5,
                         "radius": 0.15,

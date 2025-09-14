@@ -21,7 +21,7 @@ class AccelTrackMarkers(Node):
         # --- Parameter mit sinnvollen Defaults
         self.declare_parameter("frame_id", "track")
         self.declare_parameter("spacing", 5.0)  # Abstand der Cones in Längsrichtung [m]
-        self.declare_parameter("length", 75.0)  # Tracklänge [m]
+        self.declare_parameter("length", 90.0)  # Tracklänge [m]
         self.declare_parameter(
             "lane_half_width", 1.5
         )  # halber Spurabstand (links/rechts) [m]
